@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <title>JS Bin</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="jquery.piechartcountdown.js"></script>
+
+    <script>
+
+        function spinnerExamples() {
+
+            $('#basic-example .spinner').show();
+
+            $('#my-spinner').pieChartCountDown(10, function($spinner) {
+                $spinner.append('<em>Spinner 1 finished</em>');
+            });
+
+            $('#my-spinner2').pieChartCountDown(20, {color: 'green', size : 120}, function($spinner) {
+                $spinner.append('<em>Spinner 2 finished</em>');
+            });
+
+            $('#my-spinner3').pieChartCountDown({
+                time : 4,
+                color : '#FFF',
+                backgroundColor : '#000',
+                size : 30,
+                infinite : true
+            });
+        }
+
+        function startControllableSpinner() {
+            $('#control-example .spinner').show();
+            $('#start-spinner').hide();
+            $('#my-spinner4').pieChartCountDown(30, {size: 240}, function($spinner) {
+                $('#start-spinner').show();
+                $('.spinner-control').hide();
+                $spinner.text('Finito!');
+            });
+
+            $('.spinner-control').show();
+        }
+
+    </script>
+
+</head>
+<body>
+
+    <h1>Pie Chart Count Down</h1>
+
+    <p>
+        This a jQuery plugin that makes it possible to create pie charts
+        displaying time ticking down, <strong>only using CSS animations</strong>. At the moment it <strong>only supports
+        webkit browser</strong>. Also available on <a href="">github</a>
+    </p>
+
+    <div class="examples" id="basic-example">
+        <h2>Basic examples</h2>
+        <div class="spinner">
+            <h3>Count down 1</h3>
+            <div id="my-spinner"></div>
+        </div>
+        <div class="spinner">
+            <h3>Count down 2</h3>
+            <div id="my-spinner2"></div>
+        </div>
+        <div class="spinner">
+            <h3>Infinte spinner</h3>
+            <div id="my-spinner3"></div>
+        </div>
+        <div class="button-wrapper">
+            <input type="button" onclick="spinnerExamples();" value="Count me down!" />
+        </div>
+    </div>
+
+    <div class="examples" id="control-example">
+        <h2>Controllable count down</h2>
+        <div class="spinner">
+            <div id="my-spinner4"></div>
+        </div>
+        <div class="button-wrapper">
+            <input type="button" id="start-spinner" onclick="startControllableSpinner();" value="Start count down" />
+            <input type="button" class="spinner-control" onclick="$('#my-spinner4').pieChartCountDown('pause');" value="Pause" />
+            <input type="button" class="spinner-control" onclick="$('#my-spinner4').pieChartCountDown('resume');" value="Resume" />
+            <input type="button" class="spinner-control" onclick="$('#my-spinner4').pieChartCountDown('toggle');" value="Toggle" />
+        </div>
+    </div>
+
+</body>
+</html>
