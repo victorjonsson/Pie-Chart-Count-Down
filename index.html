@@ -14,18 +14,18 @@
             $('#basic-example .spinner').show();
 
             $('#my-spinner').pieChartCountDown(10, function($spinner) {
-                $spinner.append('<em>Spinner 1 finished</em>');
+                $spinner.append('<em>Count down 1 finished</em>');
             });
 
             $('#my-spinner2').pieChartCountDown(20, {color: 'green', size : 120}, function($spinner) {
-                $spinner.append('<em>Spinner 2 finished</em>');
+                $spinner.append('<em>Count down 2 finished</em>');
             });
 
             $('#my-spinner3').pieChartCountDown({
                 time : 4,
                 color : '#FFF',
                 backgroundColor : '#000',
-                size : 30,
+                size : 400,
                 infinite : true
             });
         }

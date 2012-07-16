@@ -6,7 +6,7 @@
  *
  * @credits Tom Ashworth, CSS-animations (https://github.com/phuu)
  * @license Dual licensed under the MIT or GPL Version 2 licenses
- * @requires jQuer version >= 1.6
+ * @requires jQuery version >= 1.6
  * @version 0.1
  * @stable -
  */
@@ -66,7 +66,7 @@
             return this;
         }
 
-        // Parse time, custom options and callback
+        // Get the time, custom options and callback
         // from function arguments
         for(var i=0; i < arguments.length; i++) {
             var arg = arguments[i];
@@ -82,7 +82,7 @@
             }
         }
 
-        // Set size of pie piece
+        // Set size of pie pieces
         options.pieceSize = options.size / 2;
 
         // Find out whether or not CSS animations is supported
@@ -111,7 +111,7 @@
 
             // Create spinner masks
             var spinnerID = ++Utils.numSpinners,
-                $firstSpinner = Utils.createMask(options.backgroundColor, 'rotate(-45deg)', options.pieceSize, options.time, 0, 'inner'+spinnerID, options.infinite),
+                $innerMask = Utils.createMask(options.backgroundColor, 'rotate(-45deg)', options.pieceSize, options.time, 0, 'inner'+spinnerID, options.infinite),
                 $secondMask = Utils.createMask(options.color, 'rotate(-45deg)', options.pieceSize, options.time, 0, 'mask', options.infinite),
                 $thirdMask = Utils.createMask(options.backgroundColor, 'rotate(45deg)', options.pieceSize, options.time, -1, 'mask-two', options.infinite);
 
@@ -120,13 +120,13 @@
 
             // Set callback when animation finished, resetting CSS
             // and removing mask elements
-            $firstSpinner.bind(Utils.animationEndEvent, function() {
+            $innerMask.bind(Utils.animationEndEvent, function() {
                 Utils.removeSpinner($spinner, options.backgroundColor);
                 if(typeof options.callback == 'function')
                     options.callback($spinner);
             });
 
-            // CSS for the pie of the pie chart
+            // CSS for the pie
             var spinnerWrapperCSS = {
                 'display' : 'block',
                 'background' : options.color,
@@ -141,7 +141,7 @@
             // Add spinner masks
             this
                 .html('')
-                .append($firstSpinner)
+                .append($innerMask)
                 .append($secondMask)
                 .append($thirdMask)
                 .attr('data-spinner-id', spinnerID)
@@ -259,6 +259,7 @@
                 }
             }
 
+            // Add animation key frames used by all spinners
             if(this.supportsCSSAnimation) {
                 var maskKeyframes = '@'+this.pfx+'keyframes mask {'+
                     '0% {'+this.CSSTransformRule+': rotate(-45deg);}' +
@@ -273,6 +274,13 @@
 
                 this.addAnimationKeyFrames(maskKeyframes);
                 this.addAnimationKeyFrames(secondMaskKeyframes);
+
+                // The position of the spinners might change if the
+                // window is resized and therefor we need to correct
+                // the position of the svg graphics.
+                $(window).resize(function() {
+                    $.rePositionSmootheningCircles();
+                });
             }
         },
 
@@ -441,7 +449,7 @@
             if( spinnerID !== undefined ) {
                 $element.removeAttr('data-spinner-paused');
 
-                var pauseCSS = {
+                var resumeCSS = {
                     '-ms-animation-play-state' : 'running',
                     '-o-animation-play-state' : 'running',
                     '-moz-animation-play-state' : 'running',
@@ -449,9 +457,9 @@
                     'animation-play-state' : ' running'
                 };
 
-                $element.find('.spinner-inner'+spinnerID).css(pauseCSS);
-                $element.find('.spinner-mask').css(pauseCSS);
-                $element.find('.spinner-mask-two').css(pauseCSS);
+                $element.find('.spinner-inner'+spinnerID).css(resumeCSS);
+                $element.find('.spinner-mask').css(resumeCSS);
+                $element.find('.spinner-mask-two').css(resumeCSS);
             }
         }
     };
@@ -494,7 +502,7 @@
 
             this.intervals[intervalID] = setInterval(function() {
                 var paused = $spinner.attr('data-spinner-paused');
-                if( paused !== undefined ) {
+                if( paused === undefined ) {
                     var count = parseInt($spinner.text()) - 1;
                     if(count > 0) {
                         $spinner.text(count);
