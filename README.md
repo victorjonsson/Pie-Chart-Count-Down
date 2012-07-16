@@ -50,14 +50,16 @@ be viewed here](http://victorjonsson.se/pie-chart-count-down)
 
 ## Options ##
 
-* **size : 60**
-* **time : 10**
-* **backgroundColor : #FFF**
-* **color : '#000'**
-* **callback : null**
-* **unSupportedCallback : null**
-* **smoothenPieOutline : true**
-* **infinite : false**
+* **size (Number)** — The diameter of the pie chart (pixels)
+* **time (Number)** — The number of seconds to count down from
+* **backgroundColor (String)** — Background color behind the pie chart
+* **color (String)** — The color of the pie chart
+* **callback : (Function|null)** — The function that will be called when time is up
+* **unSupportedCallback (Function|null)** — Function that will be called if CSS animations isn't supported. In
+case you don't define this callback function the plufin will fall back on an ordinary counter displaying
+the number of seconds left until the time is up.
+* **smoothenPieOutline (Boolean)** — Lorem te ipsum
+* **infinite : (Boolean)** — Lorem te ipsum...
 
 ## Actions ##
 
