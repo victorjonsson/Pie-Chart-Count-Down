@@ -6,6 +6,7 @@
  *
  * @credits Tom Ashworth, CSS-animations (https://github.com/phuu)
  * @license Dual licensed under the MIT or GPL Version 2 licenses
+ * @requires jQuer version >= 1.6
  * @version 0.1
  * @stable -
  */
@@ -16,7 +17,7 @@
         // Default options
         var options = {
             size : 60,
-            time : 3,
+            time : 10,
             backgroundColor : '#FFF',
             color : '#000',
             callback : null,
@@ -29,7 +30,7 @@
         var $spinner = this;
 
         // Controlling an already started spinner
-        if(arguments.length == 1 && typeof arguments[0] == 'string' && !$.isNumeric(arguments[0])) {
+        if(arguments.length == 1 && typeof arguments[0] == 'string') {
             if( Utils.isInitiated ) {
 
                 // Fallback
@@ -48,7 +49,7 @@
                             Utils.removeSpinner($spinner, $spinner.css('background-color'));
                             break;
                         case 'toggle':
-                            if( $spinner.attr('data-spinner-paused') ) {
+                            if( $spinner.attr('data-spinner-paused') !== undefined ) {
                                 Utils.resumeSpinner($spinner);
                             }
                             else {
@@ -172,7 +173,8 @@
         $('canvas.pie-circle').each(function() {
             var $canvas = $(this);
             var spinnerID = $canvas.attr('data-spinner');
-            if( spinnerID  && ignore != spinnerID) {
+            if( spinnerID !== undefined && ignore != spinnerID) {
+                console.log(spinnerID);
                 var $spinner = $('*[data-spinner-id='+spinnerID+']').eq(0);
                 if($spinner !== undefined) {
                     var pos = $spinner.offset();
@@ -398,7 +400,7 @@
          */
         removeSpinner : function($element, bgColor) {
             var spinnerID = $element.attr('data-spinner-id');
-            if( spinnerID ) {
+            if( spinnerID !== undefined ) {
                 Utils.removeSmootheningCircle(spinnerID);
                 $element.children().remove();
                 $element.css(Utils.getResettingCSS(bgColor));
@@ -415,7 +417,7 @@
          */
         pauseSpinner : function($element) {
             var spinnerID = $element.attr('data-spinner-id');
-            if( spinnerID ) {
+            if( spinnerID !== undefined ) {
                 $element.attr('data-spinner-paused', 1);
                 var pauseCSS = {
                     '-ms-animation-play-state' : 'paused',
@@ -436,7 +438,7 @@
          */
         resumeSpinner : function($element) {
             var spinnerID = $element.attr('data-spinner-id');
-            if( spinnerID ) {
+            if( spinnerID !== undefined ) {
                 $element.removeAttr('data-spinner-paused');
 
                 var pauseCSS = {
@@ -492,7 +494,7 @@
 
             this.intervals[intervalID] = setInterval(function() {
                 var paused = $spinner.attr('data-spinner-paused');
-                if( !paused ) {
+                if( paused !== undefined ) {
                     var count = parseInt($spinner.text()) - 1;
                     if(count > 0) {
                         $spinner.text(count);
@@ -516,7 +518,7 @@
                     this.remove($spinner);
                     break;
                 case 'toggle':
-                    if( $spinner.attr('data-spinner-paused') ) {
+                    if( $spinner.attr('data-spinner-paused') !== undefined ) {
                         this.resume($spinner);
                     }
                     else {
@@ -531,7 +533,7 @@
 
         remove : function($spinner) {
             var intervalID = $spinner.attr('data-interval-id');
-            if( intervalID ) {
+            if( intervalID !== undefined ) {
 
                 var options = this.options[intervalID];
 
@@ -552,7 +554,7 @@
 
         pause : function($spinner) {
             var intervalID = $spinner.attr('data-interval-id');
-            if( intervalID ) {
+            if( intervalID !== undefined ) {
                 $spinner.attr('data-spinner-paused', 1);
             }
         },
