@@ -102,6 +102,14 @@ stop and toggle. Example:
 </html>
 ```
 
+## Modifying the DOM while counting down ##
+
+All pie charts will get a transparent SVG circle with an absolute position above the pie chart (as long as you
+don't set the option *smoothenPieOutline* to false). This means that you will have to reposition this circle 
+when doing changes to the DOM while having an ongoing count down. All you have to do is to call 
+`$.rePositionSmootheningCircles();` and the circle will be put in the right place.
+
+
 ## Credits ##
 
 Big thanks to [Tom Ashworth](https://github.com/phuu) that has written the [CSS animations](http://phuu.net/2012/05/01/html-css-only-spinner.html)
