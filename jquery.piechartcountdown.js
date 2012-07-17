@@ -136,6 +136,7 @@
                 'visibility' : 'visible'
             };
             spinnerWrapperCSS[Utils.pfx + 'mask-box-image'] = Utils.pfx+'radial-gradient(center,ellipse cover, '+options.color+' 66%, rgba(0,0,0,0) 68%)';
+            spinnerWrapperCSS[Utils.pfx + 'mask-attachment'] = 'scroll';
             // spinnerWrapperCSS['background-image'] = Utils.pfx+'radial-gradient(center,ellipse cover, '+options.color+' 66%, rgba(0,0,0,0) 68%)';
 
             // Add spinner masks
@@ -174,12 +175,10 @@
             var $canvas = $(this);
             var spinnerID = $canvas.attr('data-spinner');
             if( spinnerID !== undefined && ignore != spinnerID) {
-                console.log(spinnerID);
                 var $spinner = $('*[data-spinner-id='+spinnerID+']').eq(0);
                 if($spinner !== undefined) {
                     var pos = $spinner.offset();
                     if(pos.left != parseInt($canvas.css('left')) || pos.top != parseInt($canvas.css('top'))) {
-                        // console.log('repos '+spinnerID);
                         $canvas.css({
                             left : pos.left +'px',
                             top: pos.top +'px'
@@ -372,28 +371,29 @@
                 .appendTo('body');
 
             var strokeSize = 5 * Math.round(Math.ceil(size / 100));
+            var context = $canvas.get(0).getContext("2d");
 
-            var canvas = $canvas.get(0);
-            var context = canvas.getContext("2d");
-            var centerX = size / 2;
-            var centerY = size / 2;
-            var radius = (size / 2) - (strokeSize / 2);
+            if( context ) {
+                var centerX = size / 2;
+                var centerY = size / 2;
+                var radius = (size / 2) - (strokeSize / 2);
 
-            context.beginPath();
-            context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-            context.fillStyle = "transparent";
-            context.fill();
-            context.lineWidth = strokeSize;
-            context.strokeStyle = color;
-            context.stroke();
+                context.beginPath();
+                context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+                context.fillStyle = "transparent";
+                context.fill();
+                context.lineWidth = strokeSize;
+                context.strokeStyle = color;
+                context.stroke();
 
-            var pos = $element.offset();
-            $canvas.css({
-                position: 'absolute',
-                top: pos.top+'px',
-                left: pos.left+'px',
-                zIndex : 9999
-            });
+                var pos = $element.offset();
+                $canvas.css({
+                    position: 'absolute',
+                    top: pos.top+'px',
+                    left: pos.left+'px',
+                    zIndex : 9999
+                });
+            }
         },
 
         /**
@@ -406,7 +406,7 @@
         /**
          * @param {jQuery} $element
          */
-        removeSpinner : function($element, bgColor) {
+        removeSpinner : function($element, bgColor)     {
             var spinnerID = $element.attr('data-spinner-id');
             if( spinnerID !== undefined ) {
                 Utils.removeSmootheningCircle(spinnerID);

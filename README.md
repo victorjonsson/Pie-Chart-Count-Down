@@ -101,4 +101,4 @@ stop and toggle. Example:
 
 ## Credits ##
 
-Big thanks to [Tom Ashworth](https://github.com/phuu) for the great [CSS animations](http://phuu.net/2012/05/01/html-css-only-spinner.html)
+Big thanks to [Tom Ashworth](https://github.com/phuu) for the [CSS used by this plugin](http://phuu.net/2012/05/01/html-css-only-spinner.html)
