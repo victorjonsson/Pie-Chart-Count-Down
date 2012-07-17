@@ -60,7 +60,7 @@ case you don't define this callback function the plugin will fall back on an ord
 the number of seconds left until the time is up. You can also override the fall back by defining an object implementing the
 same functions as the fall back object.
 * **smoothenPieOutline (Boolean)** — Lets the plugin add a transparent SVG circle above the pie chart that 
-will smoothen the edges of pie chart (default is true).
+will smoothen the edges of the pie chart (default is true).
 * **infinite (Boolean)** — Set this option to true if you want the pie chart spinner to go on forever until
 you stop it your self by calling an *action* on the element.
 
