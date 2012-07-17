@@ -100,6 +100,9 @@
                 options.unSupportedCallback($spinner);
             }
             else {
+                if(typeof options.unSupportedCallback == 'object' && options.unSupportedCallback !== null)
+                    SpinnerFallback = options.unSupportedCallback;
+
                 SpinnerFallback.start($spinner, options);
             }
         }
