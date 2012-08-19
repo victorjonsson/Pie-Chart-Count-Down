@@ -7,8 +7,7 @@
  * @credits Tom Ashworth, CSS-animations (https://github.com/phuu)
  * @license Dual licensed under the MIT or GPL Version 2 licenses
  * @requires jQuery version >= 1.6
- * @version 0.1
- * @stable -
+ * @version 0.1.2
  */
 (function($){
 
@@ -34,7 +33,7 @@
             if( Utils.isInitiated ) {
 
                 // Fallback
-                if(!Utils.supportsCSSAnimation || !$.browser.webkit) {
+                if( !Utils.supportsCSSAnimation ) {
                     SpinnerFallback.executeCommand($spinner, arguments[0]);
                 }
                 else {
@@ -57,7 +56,7 @@
                             }
                             break;
                         default:
-                            console.warn('Unkown method '+arguments[0]);
+                            throw new Error('Unkown method '+arguments[0]);
                             break;
                     }
                 }
@@ -93,9 +92,7 @@
         }
 
         // Unsupported browser!!
-        // There are still things left to be done before this plugin
-        // works in none-webkit browsers
-        if( !Utils.supportsCSSAnimation || !$.browser.webkit ) {
+        if( !Utils.supportsCSSAnimation ) {
             if(typeof options.unSupportedCallback == 'function') {
                 options.unSupportedCallback($spinner);
             }
@@ -153,6 +150,9 @@
                 .css(spinnerWrapperCSS)
                 .show();
 
+            var pos = this.offset();
+            var width = this.outerWidth();
+
             // Create SVG graphic that will smoothen the outline of the pie chart
             if( options.smoothenPieOutline ) {
                 Utils.smoothenCircleOutline(this, options.backgroundColor, spinnerID);
@@ -181,7 +181,7 @@
                 var $spinner = $('*[data-spinner-id='+spinnerID+']').eq(0);
                 if($spinner !== undefined) {
                     var pos = $spinner.offset();
-                    if(pos.left != parseInt($canvas.css('left')) || pos.top != parseInt($canvas.css('top'))) {
+                    if(pos.left != parseInt($canvas.css('left'), 10) || pos.top != parseInt($canvas.css('top'), 10)) {
                         $canvas.css({
                             left : pos.left +'px',
                             top: pos.top +'px'
@@ -191,7 +191,6 @@
             }
         });
     };
-
 
     /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
      * Container for utility functions used by this jQuery plugin
@@ -218,7 +217,6 @@
          * @param {HTMLElement} elm
          */
         init : function(elm) {
-
             this.isInitiated = true;
             var domPrefixes = 'Webkit Moz O ms Khtml'.split(' ');
             for( var i = 0; i < domPrefixes.length; i++ ) {
@@ -261,8 +259,13 @@
                 }
             }
 
+            // There are still things left to be done before this plugin
+            // works in none-webkit browsers
+            if( !$.browser.safari && !$.browser.chrome )
+                this.supportsCSSAnimation = false;
+
             // Add animation key frames used by all spinners
-            if(this.supportsCSSAnimation) {
+            if( this.supportsCSSAnimation ) {
                 var maskKeyframes = '@'+this.pfx+'keyframes mask {'+
                     '0% {'+this.CSSTransformRule+': rotate(-45deg);}' +
                     '75% {'+this.CSSTransformRule+': rotate(-45deg);}' +
@@ -537,7 +540,7 @@
                     }
                     break;
                 default:
-                    console.warn('Unknown method '+arguments[0]);
+                    throw new Error('Unknown method '+arguments[0]);
                     break;
             }
         },

@@ -5,7 +5,7 @@ At the moment this plugin **only supports webkit browsers** (Google Chrome, Safa
 of the graphics going on, but I will try to fix these issues as soon as possible.
 
 CSS3 circles is known to get quite ragged edges but this plugin uses SVG to fix that problem. [Live example can
-be viewed here](http://victorjonsson.se/pie-chart-count-down).
+be viewed here](http://victorjonsson.se/pie-chart-count-down/?from=github).
 
 ## How to use it ##
 
