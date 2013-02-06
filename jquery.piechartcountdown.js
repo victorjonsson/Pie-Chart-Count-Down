@@ -1,15 +1,36 @@
+if( !CSSAnimation || !CSSAnimation.version || CSSAnimation.version < 0.2 ) {
+    /*
+     CSSAnimation v0.2
+     Provides 'cssAnimationKeyframe' events for keyframe animations.
+     http://www.joelambert.co.uk/cssa
+
+     Copyright 2011, Joe Lambert. All rights reserved
+     Free to use under the MIT license.
+     http://www.opensource.org/licenses/mit-license.php
+     */
+    var CSSAnimation={version:"0.2"};CSSAnimation.find=function(a){for(var i=document.styleSheets,g=i.length-1;g>=0;g--)try{for(var d=i[g],e=d.cssRules?d.cssRules:d.rules?d.rules:[],c=e.length-1;c>=0;c--)if((e[c].type===window.CSSRule.WEBKIT_KEYFRAMES_RULE||e[c].type===window.CSSRule.MOZ_KEYFRAMES_RULE)&&e[c].name==a)return e[c]}catch(l){}return null};
+    CSSAnimation.trigger=function(a,i,g,d){var e={},c={},l=null,o=0,q=0,j={base:5,easing:"linear",iterationCount:1},k=["Webkit","Moz"],h;for(h in d)j[h]=d[h];if(!a.isPlaying){l=CSSAnimation.find(i);if(!l)return false;e={};for(var b=0;b<l.cssRules.length;b++){d=l.cssRules[b];h=d.keyText;var m=0;h=="from"?m=0:h=="to"?m=1:m=h.replace("%","")/100;e[m*100+"%"]=d}o=(new Date).getTime();var p=m=roundedKey=keyframe=null,s=function(f,u){var n=document.createEvent("Event");n.initEvent("cssAnimationKeyframe",true,
+        true);n.animationName=i;n.keyText=f;n.elapsedTime=u;a.dispatchEvent(n)};b=0;var r=false,t=function(f){r=false;for(b=0;b<k.length&&!r;b++)if(a.style[k[b]+"AnimationName"]!==undefined){a.style[k[b]+"AnimationDuration"]=f.duration;a.style[k[b]+"AnimationTimingFunction"]=f.timingFunction;a.style[k[b]+"AnimationIterationCount"]=f.iterationCount;a.style[k[b]+"AnimationName"]=f.name;r=true}};t({name:i,duration:g+"ms",timingFunction:j.easing,iterationCount:j.iterationCount});a.isPlaying=true;(function f(){p=
+        (new Date).getTime();percent=Math.floor((p-(o+q*g))/g*100);key=percent-percent%j.base+"%";if((keyframe=e[key])&&!c[key]){c[key]=true;s(key,(p-o)/1E3)}if(percent<100)requestAnimFrame(f,a);else{c["100%"]||s("100%",(p-o)/1E3);q++;if(q<j.iterationCount||j.iterationCount=="infinite"){c={};requestAnimFrame(f,a)}else{t({name:null,duration:null,timingFunction:null,iterationCount:0});a.isPlaying=false}}})()}};
+    window.requestAnimFrame=function(){return window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.oRequestAnimationFrame||window.msRequestAnimationFrame||function(a){window.setTimeout(a,1E3/60)}}();
+}
+
 /**
  * Pie Chart Count Down
  * ------------------------------------------
  * Copyright (c) 2012 Victor Jonsson (http://www.victorjonsson.se)
  * Documentation and issue tracking on Github (https://github.com/victorjonsson/Pie-Chart-Count-Down)
  *
- * @credits Tom Ashworth, CSS-animations (https://github.com/phuu)
- * @license Dual licensed under the MIT or GPL Version 2 licenses
+ * @license MIT license
  * @requires jQuery version >= 1.6
- * @version 0.1.2
+ * @version 1.0
  */
 (function($){
+
+    // Make it possible to listen to animation key frames using jQuery
+    if( !$.fn.cssanimation ) {
+        $.fn.cssanimation=function(a,b,c){return this.each(function(e,d){CSSAnimation.trigger(d,a,b,c)})}
+    }
 
     $.fn.pieChartCountDown = function() {
 
@@ -21,7 +42,6 @@
             color : '#000',
             callback : null,
             unSupportedCallback : null,
-            smoothenPieOutline : true,
             infinite : false
         };
 
@@ -37,27 +57,10 @@
                     SpinnerFallback.executeCommand($spinner, arguments[0]);
                 }
                 else {
-                    switch(arguments[0]) {
-                        case 'pause':
-                            Utils.pauseSpinner($spinner);
-                            break;
-                        case 'resume':
-                            Utils.resumeSpinner($spinner);
-                            break;
-                        case 'stop':
-                            Utils.removeSpinner($spinner, $spinner.css('background-color'));
-                            break;
-                        case 'toggle':
-                            if( $spinner.attr('data-spinner-paused') !== undefined ) {
-                                Utils.resumeSpinner($spinner);
-                            }
-                            else {
-                                Utils.pauseSpinner($spinner);
-                            }
-                            break;
-                        default:
-                            throw new Error('Unkown method '+arguments[0]);
-                            break;
+                    if( arguments[0] == 'destroy' ) {
+                        Utils.removeSpinner($spinner);
+                    } else {
+                        throw new Error('Unkown method '+arguments[0]);
                     }
                 }
             }
@@ -81,9 +84,6 @@
             }
         }
 
-        // Set size of pie pieces
-        options.pieceSize = options.size / 2;
-
         // Find out whether or not CSS animations is supported
         // and some other stuff we need in order for this
         // plugin to work properly
@@ -93,6 +93,7 @@
 
         // Unsupported browser!!
         if( !Utils.supportsCSSAnimation ) {
+            console.log('hoj');
             if(typeof options.unSupportedCallback == 'function') {
                 options.unSupportedCallback($spinner);
             }
@@ -109,87 +110,107 @@
             // ticking down we first of all have to remove it
             Utils.removeSpinner($spinner, options.backgroundColor);
 
-            // Create spinner masks
+            // Create spinner elements
             var spinnerID = ++Utils.numSpinners,
-                $innerMask = Utils.createMask(options.backgroundColor, 'rotate(-45deg)', options.pieceSize, options.time, 0, 'inner'+spinnerID, options.infinite),
-                $secondMask = Utils.createMask(options.color, 'rotate(-45deg)', options.pieceSize, options.time, 0, 'mask', options.infinite),
-                $thirdMask = Utils.createMask(options.backgroundColor, 'rotate(45deg)', options.pieceSize, options.time, -1, 'mask-two', options.infinite);
+                $spinnerElem = $('<div></div>');
 
-            // Create animation key frames that's unique for this spinner
-            Utils.generateMaskAnimationKeyframes(options.backgroundColor, spinnerID);
+            $spinnerElem.attr('id', 'spinner-'+spinnerID);
 
-            // Set callback when animation finished, resetting CSS
-            // and removing mask elements
-            $innerMask.bind(Utils.animationEndEvent, function() {
-                Utils.removeSpinner($spinner, options.backgroundColor);
-                if(typeof options.callback == 'function')
-                    options.callback($spinner);
+            $spinnerElem.css({
+                'position': 'relative',
+                'border-radius': '100%',
+                'width': options.size+'px',
+                'height': options.size+'px',
+                'background': options.backgroundColor
             });
 
-            // CSS for the pie
-            var spinnerWrapperCSS = {
-                'display' : 'block',
-                'background' : options.color,
-                'width' : options.size+'px',
-                'height' : options.size+'px',
-                'position' : 'relative',
-                'visibility' : 'visible'
-            };
-            spinnerWrapperCSS[Utils.pfx + 'mask-box-image'] = Utils.pfx+'radial-gradient(center,ellipse cover, '+options.color+' 66%, rgba(0,0,0,0) 68%)';
-            spinnerWrapperCSS[Utils.pfx + 'mask-attachment'] = 'scroll';
-            // spinnerWrapperCSS['background-image'] = Utils.pfx+'radial-gradient(center,ellipse cover, '+options.color+' 66%, rgba(0,0,0,0) 68%)';
+            var $left = $('<div></div>');
+                $left.css({
+                    'width' : '50%',
+                    'height' : '100%',
+                    'overflow' : 'hidden',
+                    'position' : 'absolute',
+                    'left' : '0'
+                })
+                .appendTo($spinnerElem);
 
-            // Add spinner masks
+
+            var $leftFill = $('<div></div>');
+            $leftFill.css({
+                    'border-radius':'999px',
+                    'position':'absolute',
+                    'width':'100%',
+                    'height':'100%',
+                    'left':'100%',
+                    'border-top-left-radius':'0',
+                    'border-bottom-left-radius':'0',
+                    'background' : options.color
+                })
+                .css(Utils.pfx+'animation-iteration-count', options.infinite ? 'infinite':'1')
+                .css(Utils.pfx+'animation-timing-function', 'linear')
+                .css(Utils.pfx+'transform-origin', '0 50%')
+                .addClass('left-fill')
+                .appendTo($left);
+
+
+            var $right = $('<div></div>');
+                $right.css({
+                    'width' : '50%',
+                    'height' : '100%',
+                    'overflow' : 'hidden',
+                    'position' : 'absolute',
+                    'left' : '50%'
+                })
+                .appendTo($spinnerElem);
+
+            var $rightFill = $('<div></div>');
+                $rightFill.css({
+                    'border-radius':'999px',
+                    'position':'absolute',
+                    'width':'100%',
+                    'height':'100%',
+                    'left':'-100%',
+                    'border-top-right-radius':'0',
+                    'border-bottom-right-radius':'0',
+                    'background' : options.color
+                })
+                .css(Utils.pfx+'animation-iteration-count', options.infinite ? 'infinite':'1')
+                .css(Utils.pfx+'animation-timing-function', 'linear')
+                .css(Utils.pfx+'transform-origin', '100% 50%')
+                .addClass('right-fill')
+                .appendTo($right);
+
+
             this
                 .html('')
-                .append($innerMask)
-                .append($secondMask)
-                .append($thirdMask)
+                .append($spinnerElem)
                 .attr('data-spinner-id', spinnerID)
                 .addClass('pie-chart-spinner')
-                .css(spinnerWrapperCSS)
                 .show();
 
-            var pos = this.offset();
-            var width = this.outerWidth();
+            var animOpts = {
+                iterationCount : options.infinite ? 'infinite':1
+            };
 
-            // Create SVG graphic that will smoothen the outline of the pie chart
-            if( options.smoothenPieOutline ) {
-                Utils.smoothenCircleOutline(this, options.backgroundColor, spinnerID);
-            }
+            var countDown = (options.time * 1000) * 2;
 
-            // If we have several spinners on the same page the
-            // smoothing SVG circles has to be moved to the
-            // correct position
-            $.rePositionSmootheningCircles(spinnerID);
+            $rightFill.cssanimation('ui-spinner-rotate-right',countDown, animOpts);
+
+            $leftFill
+                .cssanimation('ui-spinner-rotate-left', countDown, animOpts)
+                .bind('cssAnimationKeyframe', function(e) {
+                    if( e.originalEvent.keyText == '50%' ) {
+                        if( !options.infinite ) {
+                            Utils.removeSpinner($(this).parent().parent().parent());
+                            if(typeof options.callback == 'function')
+                                options.callback($spinner);
+                        }
+
+                    }
+                });
         }
 
         return this;
-    };
-
-    /**
-     * This function iterates over all SVG graphic (that smoothens the outline of
-     * the pie charts) and makes sure that they're in the correct position
-     *
-     * @param {Number} ignore - Optional
-     */
-    $.rePositionSmootheningCircles = function(ignore) {
-        $('canvas.pie-circle').each(function() {
-            var $canvas = $(this);
-            var spinnerID = $canvas.attr('data-spinner');
-            if( spinnerID !== undefined && ignore != spinnerID) {
-                var $spinner = $('*[data-spinner-id='+spinnerID+']').eq(0);
-                if($spinner !== undefined) {
-                    var pos = $spinner.offset();
-                    if(pos.left != parseInt($canvas.css('left'), 10) || pos.top != parseInt($canvas.css('top'), 10)) {
-                        $canvas.css({
-                            left : pos.left +'px',
-                            top: pos.top +'px'
-                        });
-                    }
-                }
-            }
-        });
     };
 
     /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -259,215 +280,42 @@
                 }
             }
 
-            // There are still things left to be done before this plugin
-            // works in none-webkit browsers
-            if( !$.browser.safari && !$.browser.chrome )
-                this.supportsCSSAnimation = false;
-
             // Add animation key frames used by all spinners
             if( this.supportsCSSAnimation ) {
-                var maskKeyframes = '@'+this.pfx+'keyframes mask {'+
-                    '0% {'+this.CSSTransformRule+': rotate(-45deg);}' +
-                    '75% {'+this.CSSTransformRule+': rotate(-45deg);}' +
-                    '100% {'+this.CSSTransformRule+': rotate(45deg);}' +
+                var keyFramePrefix = (this.pfx == '-moz-' || this.pfx == '-webkit-') ? this.pfx : '';
+                var spinnerRightFrames = '@'+keyFramePrefix+'keyframes ui-spinner-rotate-right {'+
+                    '0% {'+this.CSSTransformRule+': rotate(0deg);}' +
+                    '25% {'+this.CSSTransformRule+': rotate(180deg);}' +
+                    '50% {'+this.CSSTransformRule+': rotate(180deg);}' +
+                    '75% {'+this.CSSTransformRule+': rotate(360deg);}' +
+                    '100% {'+this.CSSTransformRule+': rotate(360deg);}' +
                     '}';
 
-                var secondMaskKeyframes = '@'+this.pfx+'keyframes mask-two {' +
-                    '0% {opacity: 0;}' +
-                    '75% {opacity: 0;}' +
-                    '76% {opacity: 1;}}';
+                var spinnerLeftFrames = '@'+keyFramePrefix+'keyframes ui-spinner-rotate-left {'+
+                    '0% {'+this.CSSTransformRule+': rotate(0deg);}' +
+                    '25% {'+this.CSSTransformRule+': rotate(0deg);}' +
+                    '50% {'+this.CSSTransformRule+': rotate(180deg);}' +
+                    '75% {'+this.CSSTransformRule+': rotate(180deg);}' +
+                    '100% {'+this.CSSTransformRule+': rotate(360deg);}' +
+                    '}';
 
-                this.addAnimationKeyFrames(maskKeyframes);
-                this.addAnimationKeyFrames(secondMaskKeyframes);
-
-                // The position of the spinners might change if the
-                // window is resized and therefor we need to correct
-                // the position of the svg graphics.
-                $(window).resize(function() {
-                    $.rePositionSmootheningCircles();
-                });
+                this.addAnimationKeyFrames(spinnerRightFrames);
+                this.addAnimationKeyFrames(spinnerLeftFrames);
             }
         },
 
 
         /**
-         * @param {String}color
-         * @param {String} transform
-         * @param {Number} size
-         * @param {Number} countdownTime
-         * @param {Number} leftPos
-         * @param {String} animationName
-         * @param {Boolean} infinite
-         * @return {jQuery}
-         */
-        createMask : function(color, transform, size, countdownTime, leftPos, animationName, infinite) {
-
-            var CSS = {
-                'display' : 'block',
-                'position' : 'absolute',
-                'top' : '1px',
-                'left' : leftPos + 'px',
-                'background' : 'transparent',
-                'border-width' : size+'px',
-                'width' : '0',
-                'height' : '0',
-                'border-style' : 'solid',
-                'border-top-color' : color,
-                'border-right-color' : 'transparent',
-                'border-left-color' : 'transparent',
-                'border-bottom-color' : 'transparent'
-            };
-
-            CSS[this.CSSTransformRule] = transform;
-            CSS[this.CSSAnimationRule] = animationName+' '+countdownTime+'s linear '+(infinite ? 'infinite':'');
-
-            return $('<div></div>')
-                .addClass('spinner-'+animationName)
-                .css(CSS);
-        },
-
-        /**
-         * @param {String} backgroundColor
-         * @param {Number} spinnerID
-         */
-        generateMaskAnimationKeyframes : function(backgroundColor, spinnerID) {
-
-            var innerKeyframes = '@'+this.pfx+'keyframes inner'+spinnerID+' {' +
-                '0% {'+this.CSSTransformRule+':rotate(-45deg);}' +
-                '25% {border-left-color:transparent;}' +
-                '26% {border-left-color:'+backgroundColor+';}' +
-                '50% {border-bottom-color:transparent;}' +
-                '51% {border-bottom-color:'+backgroundColor+';}' +
-                '75% {border-right-color:transparent;}' +
-                '76% {border-right-color:'+backgroundColor+';}' +
-                '100% {'+this.CSSTransformRule+':rotate(315deg); border-left-color:'+backgroundColor+'; border-bottom-color:'+backgroundColor+'; border-right-color:'+backgroundColor+'; }}';
-
-            this.addAnimationKeyFrames(innerKeyframes);
-        },
-
-        /**
-         * @param {String} bgColor
-         * @return {Object}
-         */
-        getResettingCSS : function(bgColor) {
-            var CSSReset = {
-                backgroundColor : bgColor,
-                height : 'auto',
-                width : 'auto'
-            };
-            CSSReset[Utils.pfx + 'mask-box-image'] = 'none';
-            CSSReset['background-image'] = 'none';
-
-            return CSSReset;
-        },
-
-        /**
-         * Will create a transparent circle (svg) with the same diameter
-         * as the width of given element. The purpose of this function is
-         * to smoothen the outline of circles created with CSS3
          * @param {jQuery} $element
          */
-        smoothenCircleOutline : function($element, color, id) {
-            var size = $element.outerWidth();
-            var $canvas = $('<canvas width="'+size+'" height="'+size+'"></canvas>');
-            $canvas
-                .attr('id', 'circle-'+id)
-                .addClass('pie-circle')
-                .attr('data-spinner', id)
-                .appendTo('body');
-
-            var strokeSize = 5 * Math.round(Math.ceil(size / 100));
-            var context = $canvas.get(0).getContext("2d");
-
-            if( context ) {
-                var centerX = size / 2;
-                var centerY = size / 2;
-                var radius = (size / 2) - (strokeSize / 2);
-
-                context.beginPath();
-                context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-                context.fillStyle = "transparent";
-                context.fill();
-                context.lineWidth = strokeSize;
-                context.strokeStyle = color;
-                context.stroke();
-
-                var pos = $element.offset();
-                $canvas.css({
-                    position: 'absolute',
-                    top: pos.top+'px',
-                    left: pos.left+'px',
-                    zIndex : 9999
-                });
-            }
-        },
-
-        /**
-         * @param {String} id
-         */
-        removeSmootheningCircle : function(id) {
-            $('#circle-'+id).remove();
-        },
-
-        /**
-         * @param {jQuery} $element
-         */
-        removeSpinner : function($element, bgColor)     {
+        removeSpinner : function($element)     {
             var spinnerID = $element.attr('data-spinner-id');
-            if( spinnerID !== undefined ) {
-                Utils.removeSmootheningCircle(spinnerID);
+            if( spinnerID  ) {
                 $element.children().remove();
-                $element.css(Utils.getResettingCSS(bgColor));
                 $element.removeAttr('data-spinner-id');
                 $element.removeAttr('data-spinner-paused');
-                setTimeout(function() {
-                    $.rePositionSmootheningCircles();
-                }, 1); // needed....
             }
         },
-
-        /**
-         * @param {jQuery} $element
-         */
-        pauseSpinner : function($element) {
-            var spinnerID = $element.attr('data-spinner-id');
-            if( spinnerID !== undefined ) {
-                $element.attr('data-spinner-paused', 1);
-                var pauseCSS = {
-                    '-ms-animation-play-state' : 'paused',
-                    '-o-animation-play-state' : 'paused',
-                    '-moz-animation-play-state' : 'paused',
-                    '-webkit-animation-play-state' : 'paused',
-                    'animation-play-state' : ' paused'
-                };
-
-                $element.find('.spinner-inner'+spinnerID).css(pauseCSS);
-                $element.find('.spinner-mask').css(pauseCSS);
-                $element.find('.spinner-mask-two').css(pauseCSS);
-            }
-        },
-
-        /**
-         * @param {jQuery} $element
-         */
-        resumeSpinner : function($element) {
-            var spinnerID = $element.attr('data-spinner-id');
-            if( spinnerID !== undefined ) {
-                $element.removeAttr('data-spinner-paused');
-
-                var resumeCSS = {
-                    '-ms-animation-play-state' : 'running',
-                    '-o-animation-play-state' : 'running',
-                    '-moz-animation-play-state' : 'running',
-                    '-webkit-animation-play-state' : 'running',
-                    'animation-play-state' : ' running'
-                };
-
-                $element.find('.spinner-inner'+spinnerID).css(resumeCSS);
-                $element.find('.spinner-mask').css(resumeCSS);
-                $element.find('.spinner-mask-two').css(resumeCSS);
-            }
-        }
     };
 
 

@@ -1,11 +1,11 @@
 # Pie Chart Count Down #
 
-jQuery plugin that makes it possible to create pie charts displaying time ticking down (**using CSS animations**).
-At the moment this plugin **only supports webkit browsers** (Google Chrome, Safari) and there's also some flickering
-of the graphics going on, but I will try to fix these issues as soon as possible.
+jQuery plugin that makes it possible to create pie charts displaying time ticking down (**using CSS animations**). This
+plugin is based on the CSS animations written by [Tom Genoni](http://atomeye.com/projects/sass-css-spinner.html) and
+the CSS animation plugin by [Joe Lambert](http://www.joelambert.co.uk/cssa). This plugin is tested successfully in the
+latest versions of Safari, Chrome, Opera and Internet Explorer
 
-CSS3 circles is known to get quite ragged edges but this plugin uses SVG to fix that problem. [Live example can
-be viewed here](http://victorjonsson.se/pie-chart-count-down/?from=github).
+[Live example can be viewed here](http://victorjonsson.se/pie-chart-count-down/?from=github).
 
 ## How to use it ##
 
@@ -46,7 +46,7 @@ be viewed here](http://victorjonsson.se/pie-chart-count-down/?from=github).
 
 *callback* (Function) - The function that will be called when the count down has finished.
 
-*action* (String) - An action of some sort that controls an ongoing count down.
+*action* (String) - An action of some sort that controls an ongoing count down (destroy is the only support action at the moment)
 
 ## Options ##
 
@@ -59,58 +59,10 @@ be viewed here](http://victorjonsson.se/pie-chart-count-down/?from=github).
 case you don't define this callback function the plugin will fall back on an ordinary counter displaying
 the number of seconds left until the time is up. You can also override the fall back by defining an object implementing the
 same functions as the fall back object.
-* **smoothenPieOutline (Boolean)** — Lets the plugin add a transparent SVG circle above the pie chart that 
-will smoothen the edges of the pie chart (default is true).
 * **infinite (Boolean)** — Set this option to true if you want the pie chart spinner to go on forever until
-you stop it your self by calling an *action* on the element.
+you stop it your self by calling *$('element').pieChartCountDown('destroy')*
 
-## Actions ##
+## Roadmap ##
 
-You can call actions on a timer thats counting down. The available actions is pause, resume
-stop and toggle. Example:
-
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-    <script src="js/jquery.piechartcountdown.min.js"></script>
-    <script>
-      function startCounter($button) {
-
-        $button.text('Pause');
-        $button.get(0).onclick = function() {
-            var $counter = $('#counter');
-            $counter.pieChartCountDown('toggle');
-            var buttonLabel = $counter.attr('data-spinner-paused') === undefined ? 'Pause':'Resume';
-        };
-
-        $('#counter').pieChartCountDown(20, function() {
-          $button.text('Count Down');
-          $button.get(0).onclick = function() {
-            startCounter( $(this) );
-          };
-        });
-
-      }
-    </script>
-  </head>
-  <body>
-    <div id="counter"></div>
-    <a href="#" onclick="startCounter($(this)); return false;" id="count-button">Count down</a>
-  </body>
-</html>
-```
-
-## Modifying the DOM while counting down ##
-
-All pie charts will get a transparent SVG circle with an absolute position above the pie chart (as long as you
-don't set the option *smoothenPieOutline* to false). This means that you will have to reposition this circle 
-when doing changes to the DOM while having an ongoing count down. All you have to do is to call 
-`$.rePositionSmootheningCircles();` and the circle will be put in the right place.
-
-
-## Credits ##
-
-Big thanks to [Tom Ashworth](https://github.com/phuu) that has written the [CSS animations](http://phuu.net/2012/05/01/html-css-only-spinner.html)
-used by this plugin.
+- Add actions "pause" and "resume"
+- Make it optional to display a number representing the time left, positioned above the pie chart
