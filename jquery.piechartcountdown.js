@@ -59,10 +59,13 @@ if( !CSSAnimation || !CSSAnimation.version || CSSAnimation.version < 0.2 ) {
                 else {
                     if( arguments[0] == 'destroy' ) {
                         Utils.removeSpinner($spinner);
+                        // todo: implement actions "pause" and "resume"
                     } else {
                         throw new Error('Unkown method '+arguments[0]);
                     }
                 }
+            } else {
+                throw new Error('Calling an action for jQuery plugin pieChartCountDown, but now count down is initiated');
             }
 
             return this;
@@ -93,7 +96,6 @@ if( !CSSAnimation || !CSSAnimation.version || CSSAnimation.version < 0.2 ) {
 
         // Unsupported browser!!
         if( !Utils.supportsCSSAnimation ) {
-            console.log('hoj');
             if(typeof options.unSupportedCallback == 'function') {
                 options.unSupportedCallback($spinner);
             }
