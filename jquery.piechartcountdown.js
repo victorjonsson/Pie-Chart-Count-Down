@@ -38,11 +38,12 @@ if( !CSSAnimation || !CSSAnimation.version || CSSAnimation.version < 0.2 ) {
         var options = {
             size : 60,
             time : 10,
-            backgroundColor : '#FFF',
+            background : '#FFF',
             color : '#000',
             callback : null,
             unSupportedCallback : null,
-            infinite : false
+            infinite : false,
+            border: 0
         };
 
         // Create a reference to this jQuery element
@@ -110,7 +111,7 @@ if( !CSSAnimation || !CSSAnimation.version || CSSAnimation.version < 0.2 ) {
 
             // In case we have restarted the spinner while it's
             // ticking down we first of all have to remove it
-            Utils.removeSpinner($spinner, options.backgroundColor);
+            Utils.removeSpinner($spinner, options.background);
 
             // Create spinner elements
             var spinnerID = ++Utils.numSpinners,
@@ -123,7 +124,8 @@ if( !CSSAnimation || !CSSAnimation.version || CSSAnimation.version < 0.2 ) {
                 'border-radius': '100%',
                 'width': options.size+'px',
                 'height': options.size+'px',
-                'background': options.backgroundColor
+                'background': options.background,
+                border : options.border+'px solid '+options.background
             });
 
             var $left = $('<div></div>');
@@ -317,7 +319,7 @@ if( !CSSAnimation || !CSSAnimation.version || CSSAnimation.version < 0.2 ) {
                 $element.removeAttr('data-spinner-id');
                 $element.removeAttr('data-spinner-paused');
             }
-        },
+        }
     };
 
 
@@ -344,7 +346,7 @@ if( !CSSAnimation || !CSSAnimation.version || CSSAnimation.version < 0.2 ) {
                 .attr('data-interval-id', intervalID)
                 .css({
                     fontSize : (0.8 * options.size) + 'px',
-                    background: options.backgroundColor,
+                    background: options.background,
                     color : options.color,
                     width : options.size,
                     height : options.size,
@@ -406,7 +408,6 @@ if( !CSSAnimation || !CSSAnimation.version || CSSAnimation.version < 0.2 ) {
                 $spinner.text('');
 
                 if(options) {
-                    $spinner.css(Utils.getResettingCSS(options.backgroundColor));
                     if(typeof options.callback == 'function')
                         options.callback($spinner);
                 }

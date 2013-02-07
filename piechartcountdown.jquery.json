@@ -1,0 +1,27 @@
+{
+    "name" : "piechartcountdown",
+    "title" : "Pie Chart Countdown",
+    "description" : "Plugin that makes it possible to create pie charts displaying time ticking down (using CSS animations).",
+    "keywords": [
+        "form",
+        "ui",
+        "time"
+    ],
+    "version" : "1.0.0",
+    "author" : {
+        "name": "Victor Jonsson",
+        "url": "http://victorjonsson.se/",
+        "email" : "kontakt@victorjonsson.se"
+    },
+    "homepage" : "https://github.com/victorjonsson/Pie-Chart-Count-Down",
+    "demo" : "http://victorjonsson.se/31/pie-chart-count-down/?from=jQuery",
+    "download" : "https://github.com/victorjonsson/Pie-Chart-Count-Down/tags",
+    "bugs" : "https://github.com/victorjonsson/Pie-Chart-Count-Down/issues",
+    "licenses" : [{
+        "type": "MIT",
+        "url": "http://www.opensource.org/licenses/mit-license.php"
+    }],
+    "dependencies" : {
+        "jquery": ">=1.6"
+    }
+}

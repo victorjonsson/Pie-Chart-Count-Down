@@ -10,9 +10,7 @@
     <h1>Pie Chart Count Down</h1>
 
     <p>
-        This a jQuery plugin that makes it possible to create pie charts
-        displaying time ticking down, <strong>only using CSS animations</strong>. At the moment it <strong>only supports
-        webkit browser</strong> (Safari and Google Chrome). Documentation and issue tracking on <a href="https://github.com/victorjonsson/Pie-Chart-Count-Down/blob/master/README.md">github</a>.
+       Documentation and issue tracking on <a href="https://github.com/victorjonsson/Pie-Chart-Count-Down/blob/master/README.md">github</a>.
     </p>
 
     <div class="examples" id="basic-example">
@@ -64,8 +62,16 @@
                .bind('click', function() {
                     if(this.value == 'Start infinte spinner') {
                         this.value = 'Remove spinner';
-                        $spinner3.pieChartCountDown(1, {color:'#000', background: '#FFF', size:60, infinite:true});
-                    } else {
+                        $spinner3.pieChartCountDown({
+                            time : 1,
+                            color:'#FFF',
+                            background: '#555',
+                            border:8,
+                            size: 40,
+                            infinite:true
+                        });
+                    }
+                    else {
                         $spinner3.pieChartCountDown('destroy');
                         this.value = 'Start infinte spinner';
                     }
