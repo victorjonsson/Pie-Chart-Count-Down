@@ -5,7 +5,7 @@ plugin is based on the CSS animations written by [Tom Genoni](http://atomeye.com
 the CSS animation plugin by [Joe Lambert](http://www.joelambert.co.uk/cssa). This plugin is tested successfully in the
 latest versions of Safari, Chrome and Mozilla (fallback available in the other browsers).
 
-[Live example can be viewed here](http://victorjonsson.se/pie-chart-count-down/?from=github).
+[Live example can be viewed here](http://codepen.io/anon/pen/qNPAZk).
 
 ## How to use it ##
 
